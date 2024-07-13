@@ -43,3 +43,14 @@ func Decode[T any](bytes []byte) (T, error) {
 	}
 	return v, nil
 }
+
+func ConvertOnOffToInt(value string) int {
+	switch value {
+	case "ON":
+		return 1
+	case "OFF":
+		return 0
+	default:
+		panic("invalid value for ON/OFF")
+	}
+}

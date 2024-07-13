@@ -12,6 +12,7 @@ services:
       - DOCKER_INFLUXDB_INIT_PASSWORD=mypassword
       - DOCKER_INFLUXDB_INIT_ORG=myorg
       - DOCKER_INFLUXDB_INIT_BUCKET=mybucket
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-token
     volumes:
       - influxdb-storage:/var/lib/influxdb2
 

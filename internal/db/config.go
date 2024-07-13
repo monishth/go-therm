@@ -1,6 +1,7 @@
 package db
 
 import (
+
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/monishth/go-therm/internal/models"

@@ -20,6 +20,7 @@ CREATE TABLE valve (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     friendly_name TEXT NOT NULL,
+    relay_name TEXT NOT NULL,
     state_topic TEXT NOT NULL,
     command_topic TEXT NOT NULL,
     zone_id INTEGER,
