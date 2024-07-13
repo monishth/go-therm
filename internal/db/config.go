@@ -17,7 +17,7 @@ type Config struct {
 	Thermostats      []models.Thermostat
 	ZoneToThermostat map[int][]*models.Thermostat
 	ZoneToValve      map[int][]*models.Valve
-	IdToZone         map[int]*models.Zone
+	IDToZone         map[int]*models.ZoneModel
 }
 
 func LoadConfig() Config {
@@ -27,11 +27,11 @@ func LoadConfig() Config {
 	}
 	defer db.Close()
 
-	zones := []models.Zone{}
+	zoneModels := []models.ZoneModel{}
 	thermostats := []models.Thermostat{}
 	valves := []models.Valve{}
 
-	err = db.Select(&zones, "SELECT * FROM zone")
+	err = db.Select(&zoneModels, "SELECT * FROM zone")
 	if err != nil {
 		panic(err)
 	}
@@ -56,17 +56,25 @@ func LoadConfig() Config {
 		zoneToValve[valves[i].ZoneID] = append(zoneToValve[valves[i].ZoneID], &valves[i])
 	}
 
-	idToZone := make(map[int]*models.Zone)
-	for i := range zones {
-		idToZone[zones[i].ID] = &zones[i]
+	idToZone := make(map[int]*models.ZoneModel)
+	for i := range zoneModels {
+		idToZone[zoneModels[i].ID] = &zoneModels[i]
+	}
+	zones := make([]models.Zone, len(zoneModels))
+	for i, zoneModel := range zoneModels {
+		zones[i] = models.Zone{
+			ID:           zoneModel.ID,
+			Name:         zoneModel.Name,
+			FriendlyName: zoneModel.FriendlyName,
+			Valves:       zoneToValve[zoneModel.ID],
+			Thermostats:  zoneToThermostat[zoneModel.ID],
+		}
 	}
 
 	return Config{
-		Zones:            zones,
-		Thermostats:      thermostats,
-		Valves:           valves,
-		ZoneToThermostat: zoneToThermostat,
-		ZoneToValve:      zoneToValve,
-		IdToZone:         idToZone,
+		Zones:       zones,
+		Thermostats: thermostats,
+		Valves:      valves,
+		IDToZone:    idToZone,
 	}
 }
