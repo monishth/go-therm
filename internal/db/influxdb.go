@@ -22,7 +22,8 @@ type InfluxDBClient struct {
 type TimeSeriesDataStore interface {
 	Close()
 	WriteTemperature(zoneID int, thermostatID string, temp float64)
-	WriteTemperatureTarget(zoneID int, target, error, output float64)
+	WriteTemperatureData(zoneID int, target, error, output float64)
+	WriteTarget(zoneID int, target float64)
 	WriteValveState(zoneID int, valveID int, state int)
 	FetchZoneTemp(zoneID int, ctx context.Context) (float64, error)
 }
@@ -55,10 +56,18 @@ func (c *InfluxDBClient) WriteTemperature(zoneID int, thermostatID string, temp 
 	c.WriteAPI.WritePoint(p)
 }
 
-func (c *InfluxDBClient) WriteTemperatureTarget(zoneID int, target, error, output float64) {
+func (c *InfluxDBClient) WriteTemperatureData(zoneID int, target, error, output float64) {
 	p := influxdb2.NewPoint("temperature",
 		map[string]string{"zoneID": strconv.Itoa(zoneID)},
 		map[string]interface{}{"error": error, "target": target, "output": output},
+		time.Now())
+	c.WriteAPI.WritePoint(p)
+}
+
+func (c *InfluxDBClient) WriteTarget(zoneID int, target float64) {
+	p := influxdb2.NewPoint("temperature",
+		map[string]string{"zoneID": strconv.Itoa(zoneID)},
+		map[string]interface{}{"target": target},
 		time.Now())
 	c.WriteAPI.WritePoint(p)
 }

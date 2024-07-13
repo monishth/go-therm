@@ -12,6 +12,7 @@ type App struct {
 	MessageClient       messaging.MessageClient
 	TimeSeriesDataStore db.TimeSeriesDataStore
 	Controllers         map[int]*PIDController
+	Targets             map[int]float64
 }
 
 // All this does is store temp measurements atm
@@ -27,18 +28,6 @@ func CreateApp() App {
 	}
 }
 
-func (a *App) InitialiseControllers() {
-	if a.Controllers == nil {
-		controllers := make(map[int]*PIDController)
-
-		for _, zone := range a.Config.Zones {
-			log.Printf("Creating PID Controller for Zone: %d", zone.ID)
-			controllers[zone.ID] = NewPIDController(0.1, 0, 0.1, 21)
-		}
-		a.Controllers = controllers
-	}
-}
-
 func (a *App) Listen() {
 	// Start Listeners
 	a.subscribeThermostats()
@@ -49,4 +38,11 @@ func (e *App) Shutdown() {
 	e.TimeSeriesDataStore.Close()
 	e.MessageClient.Close()
 	log.Println("Engine shutdown")
+}
+
+// These should move
+
+func (a *App) SetTarget(zoneID int, target float64) {
+	a.Targets[zoneID] = target
+	a.TimeSeriesDataStore.WriteTarget(zoneID, target)
 }

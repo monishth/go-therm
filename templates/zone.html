@@ -1,0 +1,26 @@
+{{ define "zone" }}
+<div class="zone" id="zone-{{.Zone.ID}}">
+  <h2>{{.Zone.FriendlyName}} ({{.Zone.Name}})</h2>
+  <div>
+    <label for="temp-{{.Zone.ID}}">Target Temperature:</label>
+    <input
+      type="number"
+      id="temp-{{.Zone.ID}}"
+      name="temp"
+      value="{{.TargetTemp}}"
+      min="0"
+      max="40"
+      step="0.5"
+    />
+    <button
+      hx-put="/zone/{{.Zone.ID}}"
+      hx-include="[name=temp]"
+      hx-vals="{'id': '{{.Zone.ID}}'}"
+      hx-target="#zone-{{.Zone.ID}}"
+      hx-swap="outerHTML"
+    >
+      Set Temperature
+    </button>
+  </div>
+</div>
+{{ end }}
