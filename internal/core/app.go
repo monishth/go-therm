@@ -2,6 +2,7 @@ package core
 
 import (
 	"log"
+	"sync"
 
 	"github.com/monishth/go-therm/internal/db"
 	"github.com/monishth/go-therm/internal/messaging"
@@ -12,7 +13,14 @@ type App struct {
 	MessageClient       messaging.MessageClient
 	TimeSeriesDataStore db.TimeSeriesDataStore
 	Controllers         map[int]*PIDController
-	Targets             map[int]float64
+	targets             map[int]float64
+	targetsMutex        sync.RWMutex
+}
+
+func (a *App) GetTargets() map[int]float64 {
+	a.targetsMutex.RLock()
+	defer a.targetsMutex.RUnlock()
+	return a.targets
 }
 
 // All this does is store temp measurements atm
@@ -34,15 +42,16 @@ func (a *App) Listen() {
 	a.subscribeValves()
 }
 
-func (e *App) Shutdown() {
-	e.TimeSeriesDataStore.Close()
-	e.MessageClient.Close()
+func (a *App) Shutdown() {
+	a.TimeSeriesDataStore.Close()
+	a.MessageClient.Close()
 	log.Println("Engine shutdown")
 }
 
-// These should move
-
+// This should probably move
 func (a *App) SetTarget(zoneID int, target float64) {
-	a.Targets[zoneID] = target
+	a.targetsMutex.Lock()
+	defer a.targetsMutex.Unlock()
+	a.targets[zoneID] = target
 	a.TimeSeriesDataStore.WriteTarget(zoneID, target)
 }

@@ -54,3 +54,10 @@ func ConvertOnOffToInt(value string) int {
 		panic("invalid value for ON/OFF")
 	}
 }
+
+func ConvertBoolToOnOff(value bool) string {
+	if value {
+		return "ON"
+	}
+	return "OFF"
+}

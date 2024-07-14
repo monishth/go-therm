@@ -65,7 +65,7 @@ func handleIndex(app *core.App, w http.ResponseWriter, r *http.Request) {
 	for _, zone := range app.Entities.Zones {
 		zoneData = append(zoneData, ZoneData{
 			Zone:       zone,
-			TargetTemp: app.Targets[zone.ID],
+			TargetTemp: app.GetTargets()[zone.ID],
 		})
 	}
 
@@ -99,7 +99,7 @@ func handleZone(app *core.App, w http.ResponseWriter, r *http.Request) {
 				}
 				data := ZoneData{
 					Zone:       zone,
-					TargetTemp: app.Targets[zone.ID],
+					TargetTemp: app.GetTargets()[zone.ID],
 				}
 				if err := tmpl.ExecuteTemplate(w, "zone", data); err != nil {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -125,7 +125,7 @@ func handleZone(app *core.App, w http.ResponseWriter, r *http.Request) {
 				}
 				data := ZoneData{
 					Zone:       zone,
-					TargetTemp: app.Targets[zone.ID],
+					TargetTemp: app.GetTargets()[zone.ID],
 				}
 				if err := tmpl.ExecuteTemplate(w, "zone", data); err != nil {
 					http.Error(w, err.Error(), http.StatusInternalServerError)

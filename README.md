@@ -16,7 +16,7 @@
 
 ## Overview
 
-go-therm is a project designed to take existing Tasmota enabled temperature sensors and heating control valves and use this information to *smartly* control heating based on user-defined targets. 
+go-therm is a project designed to take existing Tasmota enabled temperature sensors and heating control valves and use this information to _smartly_ control heating based on user-defined targets.
 It uses InfluxDB2 to store historical temperature data as there is some value to having this data queryable in the future.
 
 ## Getting Started
@@ -73,4 +73,5 @@ It uses InfluxDB2 to store historical temperature data as there is some value to
 - [x] Tasmota state handlers
 - [x] PID controllers
 - [x] Basic frontend for setting target per zone
+- [ ] Set valve state based on PID output
 - [ ] Schedule system (core + frontend)

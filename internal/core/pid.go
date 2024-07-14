@@ -1,6 +1,7 @@
 package core
 
 import (
+	"sync"
 	"time"
 
 	"github.com/monishth/go-therm/pkg/utils"
@@ -14,6 +15,7 @@ type PIDController struct {
 	integral  float64   // Integral accumulator
 	prevError float64   // Previous error
 	prevTime  time.Time // Time of the previous measurement
+	rwMu      sync.RWMutex
 }
 
 // NewPIDController creates a new PID controller
@@ -30,6 +32,8 @@ func NewPIDController(Kp, Ki, Kd, setpoint float64) *PIDController {
 // SetSetpoint sets the desired value for the PID controller
 func (pid *PIDController) SetSetpoint(setpoint float64) {
 	if setpoint != pid.setpoint {
+		pid.rwMu.Lock()
+		defer pid.rwMu.Unlock()
 		pid.setpoint = setpoint
 		pid.integral = 0
 		pid.prevError = 0
@@ -39,6 +43,8 @@ func (pid *PIDController) SetSetpoint(setpoint float64) {
 
 // Calculate calculates the control variable
 func (pid *PIDController) Calculate(measurement float64) float64 {
+	pid.rwMu.Lock()
+	defer pid.rwMu.Unlock()
 	// Calculate time difference
 	currentTime := time.Now()
 	deltaTime := currentTime.Sub(pid.prevTime).Seconds()

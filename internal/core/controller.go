@@ -17,7 +17,7 @@ func (a *App) InitialiseControllers() {
 			targets[zone.ID] = 21
 		}
 		a.Controllers = controllers
-		a.Targets = targets
+		a.targets = targets
 	}
 }
 
@@ -49,7 +49,7 @@ func (a *App) controllerTick(ctx context.Context) {
 			continue
 		}
 
-		target := a.Targets[zoneID]
+		target := a.GetTargets()[zoneID]
 
 		controller.SetSetpoint(target)
 
