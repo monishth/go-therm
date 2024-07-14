@@ -1,7 +1,6 @@
 package db
 
 import (
-
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/monishth/go-therm/internal/models"
@@ -11,7 +10,7 @@ import (
 // This would usually be just the connection in this file
 // but to keep things simple for now
 // I do not want business logic in here permanently
-type Config struct {
+type Entities struct {
 	Zones            []models.Zone
 	Valves           []models.Valve
 	Thermostats      []models.Thermostat
@@ -20,7 +19,7 @@ type Config struct {
 	IDToZone         map[int]*models.ZoneModel
 }
 
-func LoadConfig() Config {
+func LoadEntities() Entities {
 	db, err := sqlx.Connect("sqlite3", "./config.db")
 	if err != nil {
 		panic(err)
@@ -71,7 +70,7 @@ func LoadConfig() Config {
 		}
 	}
 
-	return Config{
+	return Entities{
 		Zones:       zones,
 		Thermostats: thermostats,
 		Valves:      valves,

@@ -8,7 +8,7 @@ import (
 )
 
 func (a *App) subscribeThermostats() {
-	for _, thermostat := range a.Config.Thermostats {
+	for _, thermostat := range a.Entities.Thermostats {
 		handler := func(state models.SensorState) {
 			a.TimeSeriesDataStore.WriteTemperature(thermostat.ZoneID, thermostat.ID, state.DS18B20.Temperature)
 		}
@@ -19,7 +19,7 @@ func (a *App) subscribeThermostats() {
 
 func (a *App) subscribeValves() {
 	topicToHandlers := make(map[string][]func(map[string]any))
-	for _, valve := range a.Config.Valves {
+	for _, valve := range a.Entities.Valves {
 		handler := func(state map[string]interface{}) {
 			a.TimeSeriesDataStore.WriteValveState(valve.ZoneID, valve.ID, utils.ConvertOnOffToInt(state[valve.RelayName].(string)))
 		}

@@ -11,7 +11,7 @@ func (a *App) InitialiseControllers() {
 		controllers := make(map[int]*PIDController)
 		targets := make(map[int]float64)
 
-		for _, zone := range a.Config.Zones {
+		for _, zone := range a.Entities.Zones {
 			log.Printf("Creating PID Controller for Zone: %d", zone.ID)
 			controllers[zone.ID] = NewPIDController(5, 0.5, 1, 21)
 			targets[zone.ID] = 21

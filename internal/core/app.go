@@ -8,7 +8,7 @@ import (
 )
 
 type App struct {
-	Config              db.Config
+	Entities            db.Entities
 	MessageClient       messaging.MessageClient
 	TimeSeriesDataStore db.TimeSeriesDataStore
 	Controllers         map[int]*PIDController
@@ -17,12 +17,12 @@ type App struct {
 
 // All this does is store temp measurements atm
 func CreateApp() App {
-	config := db.LoadConfig()
+	entities := db.LoadEntities()
 	mqttClient := messaging.StartMQTTClient()
 	dbClient := db.CreateInfluxClient()
 
 	return App{
-		Config:              config,
+		Entities:            entities,
 		MessageClient:       &mqttClient,
 		TimeSeriesDataStore: dbClient,
 	}

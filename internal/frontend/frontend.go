@@ -62,7 +62,7 @@ func handleIndex(app *core.App, w http.ResponseWriter, r *http.Request) {
 
 	// Combine Zone data with TargetTemp for each Zone
 	var zoneData []ZoneData
-	for _, zone := range app.Config.Zones {
+	for _, zone := range app.Entities.Zones {
 		zoneData = append(zoneData, ZoneData{
 			Zone:       zone,
 			TargetTemp: app.Targets[zone.ID],
@@ -90,7 +90,7 @@ func handleZone(app *core.App, w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		for _, zone := range app.Config.Zones {
+		for _, zone := range app.Entities.Zones {
 			if zone.ID == id {
 				tmpl, err := template.ParseFiles(filepath.Join("templates", "zone.html"))
 				if err != nil {
@@ -115,7 +115,7 @@ func handleZone(app *core.App, w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		for _, zone := range app.Config.Zones {
+		for _, zone := range app.Entities.Zones {
 			if zone.ID == id {
 				app.SetTarget(zone.ID, targetTemp)
 				tmpl, err := template.ParseFiles(filepath.Join("templates", "zone.html"))
