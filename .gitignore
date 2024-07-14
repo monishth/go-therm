@@ -1,3 +1,4 @@
 ./influx-data
 *.db
 seed.sql
+.env

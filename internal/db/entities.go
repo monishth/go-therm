@@ -19,8 +19,8 @@ type Entities struct {
 	IDToZone         map[int]*models.ZoneModel
 }
 
-func LoadEntities() Entities {
-	db, err := sqlx.Connect("sqlite3", "./config.db")
+func LoadEntities(path string) Entities {
+	db, err := sqlx.Connect("sqlite3", path)
 	if err != nil {
 		panic(err)
 	}

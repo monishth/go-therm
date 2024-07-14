@@ -4,6 +4,7 @@ import (
 	"log"
 	"sync"
 
+	"github.com/monishth/go-therm/internal/config"
 	"github.com/monishth/go-therm/internal/db"
 	"github.com/monishth/go-therm/internal/messaging"
 )
@@ -15,6 +16,7 @@ type App struct {
 	Controllers         map[int]*PIDController
 	targets             map[int]float64
 	targetsMutex        sync.RWMutex
+	Config              *config.Config
 }
 
 func (a *App) GetTargets() map[int]float64 {
@@ -25,14 +27,26 @@ func (a *App) GetTargets() map[int]float64 {
 
 // All this does is store temp measurements atm
 func CreateApp() App {
-	entities := db.LoadEntities()
-	mqttClient := messaging.StartMQTTClient()
-	dbClient := db.CreateInfluxClient()
+	config := config.LoadConfig()
+	entities := db.LoadEntities(config.DBFile)
+	dbClient := db.CreateInfluxClient(
+		config.InfluxDBURL,
+		config.InfluxDBPort,
+		config.InfluxDBToken,
+		config.InfluxDBOrg,
+		config.InfluxDBBucket,
+	)
+	mqttClient := messaging.StartMQTTClient(
+		config.MqttURL,
+		config.MqttPort,
+		config.MqttClientID,
+	)
 
 	return App{
 		Entities:            entities,
 		MessageClient:       &mqttClient,
 		TimeSeriesDataStore: dbClient,
+		Config:              config,
 	}
 }
 

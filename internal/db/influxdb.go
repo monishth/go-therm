@@ -19,21 +19,12 @@ type InfluxDBClient struct {
 	QueryAPI   influxAPI.QueryAPI
 }
 
-type TimeSeriesDataStore interface {
-	Close()
-	WriteTemperature(zoneID int, thermostatID string, temp float64)
-	WriteTemperatureData(zoneID int, target, error, output float64)
-	WriteTarget(zoneID int, target float64)
-	WriteValveState(zoneID int, valveID int, state int)
-	FetchZoneTemp(zoneID int, ctx context.Context) (float64, error)
-}
-
-func CreateInfluxClient() *InfluxDBClient {
+func CreateInfluxClient(url, port, token, org, bucket string) *InfluxDBClient {
 	c := InfluxDBClient{}
 	c.dbConnOnce.Do(func() {
-		c.client = influxdb2.NewClientWithOptions("http://localhost:8086", "my-token", influxdb2.DefaultOptions().SetBatchSize(20))
-		c.WriteAPI = c.client.WriteAPI("myorg", "mybucket")
-		c.QueryAPI = c.client.QueryAPI("myorg")
+		c.client = influxdb2.NewClientWithOptions(fmt.Sprintf("http://%s:%s", url, port), token, influxdb2.DefaultOptions().SetBatchSize(20))
+		c.WriteAPI = c.client.WriteAPI(org, bucket)
+		c.QueryAPI = c.client.QueryAPI(org)
 	})
 	return &c
 }

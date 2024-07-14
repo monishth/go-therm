@@ -1,6 +1,7 @@
 package messaging
 
 import (
+	"fmt"
 	"log"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
@@ -17,8 +18,8 @@ var messagePubHandler MQTT.MessageHandler = func(client MQTT.Client, msg MQTT.Me
 	log.Printf("Received message: %s from topic: %s\n", payload, msg.Topic())
 }
 
-func StartMQTTClient() MQTTClient {
-	opts := MQTT.NewClientOptions().AddBroker("tcp://172.16.255.82:1883").SetClientID("go-therm")
+func StartMQTTClient(url, port, clientID string) MQTTClient {
+	opts := MQTT.NewClientOptions().AddBroker(fmt.Sprintf("tcp://%s:%s", url, port)).SetClientID(clientID)
 	opts.SetDefaultPublishHandler(messagePubHandler)
 	client := MQTT.NewClient(opts)
 

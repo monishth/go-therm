@@ -19,7 +19,7 @@ type ZoneData struct {
 }
 
 func StartFrontend(app *core.App, ctx context.Context) {
-	srv := &http.Server{Addr: ":8080"}
+	srv := &http.Server{Addr: ":" + app.Config.Port}
 	http.HandleFunc("/", wrapHandler(app, handleIndex))
 	http.HandleFunc("/zone/", wrapHandler(app, handleZone))
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
@@ -30,7 +30,7 @@ func StartFrontend(app *core.App, ctx context.Context) {
 		}
 	}()
 
-	log.Println("Server started at http://localhost:8080")
+	log.Printf("Server started at http://localhost:%s", app.Config.Port)
 
 	<-ctx.Done()
 
@@ -45,6 +45,8 @@ func StartFrontend(app *core.App, ctx context.Context) {
 
 func wrapHandler(app *core.App, h func(*core.App, http.ResponseWriter, *http.Request)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		log.Printf("Request: %s %s %s", r.Method, r.URL.Path, r.Form)
 		h(app, w, r)
 	}
 }
